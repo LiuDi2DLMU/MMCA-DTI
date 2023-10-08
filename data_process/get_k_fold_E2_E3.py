@@ -18,7 +18,7 @@ def concatdata(a, b, max_num, prop=1.0):
         y = b.loc[b[4] == 0].sample(n=need_negetive, random_state=1)
         a = pd.concat([a, x, y])
     else:
-        raise Exception(f"合并时有问题 {need_negetive} // {num_negetive}, {need_positive} // {num_positive}")
+        raise Exception(f"Problems with the merger {need_negetive} // {num_negetive}, {need_positive} // {num_positive}")
 
     return a.drop_duplicates()
 
@@ -28,7 +28,7 @@ def dropdata(data, keys, position, radio=0.5):
     for i, key in enumerate(keys):
         temp = data[data[position] == key]
         if len(temp) == 0:
-            raise ValueError(f"{key} 不存在")
+            raise ValueError(f"{key} non-existent")
         if len(temp) >= 2:
             temp = temp.sample(frac=radio)
         result.append(temp)

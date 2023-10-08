@@ -1,11 +1,10 @@
 import numpy as np
 import torch
-from raguler import evaluate
-from frame.EarlyStopping import EarlyStopping
-from tqdm import tqdm, trange
 from matplotlib import pyplot as plt
-import torch.nn.functional as F
+
+from frame.EarlyStopping import EarlyStopping
 from hyperparameter import Hyperparameter
+from raguler import evaluate
 
 
 class Trainer(object):
@@ -69,7 +68,6 @@ class Trainer(object):
         outputs = None
         labels = None
 
-        # trian_pbar = tqdm(enumerate(self.train_dataset, start=1), total=len(self.train_dataset))
         for i, (drug, target, label) in enumerate(self.train_dataset, start=1):
             if self.use_cuda:
                 temp = []
@@ -79,21 +77,17 @@ class Trainer(object):
                 target = target.cuda()
                 label = label.cuda()
 
-            # 梯度清零
             self.optimizer.zero_grad()
-            # 暂时写成这样，防止模型后续会添加其他的输出，用来占位
             output = self.model(drug, target)
-            # 计算损失值
             if self.hp.return_one:
                 output = torch.squeeze(torch.nn.Sigmoid()(output))
                 loss = self.loss_fn(output, label.float())
             else:
                 loss = self.loss_fn(output, label)
-            # 反向传播
             loss.backward()
             self.optimizer.step()
 
-            # 损失值叠加以及混淆矩阵的计算
+            # Loss-value superposition and computation of confusion matrices
             epoch_loss += loss.item()
             if outputs is None:
                 outputs = output.cpu().detach().numpy()
@@ -119,7 +113,6 @@ class Trainer(object):
         if load_model is True:
             self.model.load_state_dict(torch.load(f"weight/{filename}"))
 
-        # pbar = tqdm(enumerate(data, start=1), total=len(data))
         for i, (drug, target, label) in enumerate(data, start=1):
             if self.use_cuda:
                 temp = []

@@ -17,7 +17,7 @@ def concatdata(a, b, max_num, prop=1.0):
         y = b.loc[b[4] == 0].sample(n=need_negetive, random_state=1)
         a = pd.concat([a, x, y])
     else:
-        raise Exception(f"合并时有问题 {need_negetive} // {num_negetive}, {need_positive} // {num_positive}")
+        raise Exception(f"Problems with the merger {need_negetive} // {num_negetive}, {need_positive} // {num_positive}")
 
     return a.drop_duplicates()
 
@@ -27,7 +27,7 @@ def dropdata(data, keys, position, radio=0.5):
     for i, key in enumerate(keys):
         temp = data[data[position] == key]
         if len(temp) == 0:
-            raise ValueError(f"{key} 不存在")
+            raise ValueError(f"{key} non-existent")
         if len(temp) >= 2:
             temp = temp.sample(frac=radio)
         result.append(temp)
@@ -96,14 +96,14 @@ def split_k_fold(kfold, dataset="DrugBank"):
             y = dropdata(data_a, test_protein, 1)
             data_a = pd.concat([x, y]).drop_duplicates()
         if len(data_a) > train_size:
-            raise Exception(f"经过一次Drop后，数据仍超过限制长度{len(data_a)} // {train_size}")
+            raise Exception(f"After a Drop, the data still exceeds the length limit {len(data_a)} // {train_size}")
         data_b = pd.concat([otherdata, data_a, data_a]).drop_duplicates(keep=False)
         train_data = concatdata(data_a, data_b, max_num=train_size, prop=prop)
         val_data = pd.concat([otherdata, train_data, train_data]).drop_duplicates(keep=False)
         train_data.to_csv(f"kfolddata/{dataset}/1/{i}/train.csv", header=False, index=False)
         val_data.to_csv(f"kfolddata/{dataset}/1/{i}/val.csv", header=False, index=False)
 
-        print(f"共计{len(train_data)} // {len(val_data)} // {len(test_data)} 条数据， 其中测试集删除了{loss}条数据")
+        print(f"Total {len(train_data)} // {len(val_data)} // {len(test_data)} entries, where {loss} entries were removed from the test set")
 
     file.close()
 

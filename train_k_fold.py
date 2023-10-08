@@ -20,7 +20,7 @@ from raguler import PolyLoss
 
 def collate_fn(data):
     """
-    用来将数据转化成mini-batch大小的张量
+    Used to transform data into mini-batch size tensor
     :param data:
     :return:
     """
@@ -66,6 +66,7 @@ def main():
     hp.dataset = args.dataset
     hp.dataModel = "E" + str(args.e)
 
+    # Weights for dealing with unbalanced data
     if hp.dataset == "KIBA":
         # hp.weight = [1, 4.25]
         hp.weight = [0.2, 0.8]
@@ -73,6 +74,7 @@ def main():
         # hp.weight = [1, 2.52
         hp.weight = [0.3, 0.7]
 
+    # Save Path Settings
     hp.file_dir = f"result/{hp.dataset}"
 
     if not os.path.exists(f'{hp.file_dir}'):
@@ -88,7 +90,7 @@ def main():
     os.makedirs(f'{hp.file_dir}')
     hp.filename = hp.current_time
 
-    with open(f'{hp.file_dir}/valid.csv', "w", newline='') as csvfile:
+    with open(f'{hp.file_dir}/hyper.csv', "w", newline='') as csvfile:
         writer = csv.writer(csvfile, dialect='excel')
         for temp in hp.__dict__.items():
             print(f"{temp[0]:>35}:{temp[1]}")
@@ -104,6 +106,7 @@ def main():
     else:
         print("this code run on CPU!")
 
+    # Setting the random seed
     def setup_seed(seed):
         torch.manual_seed(seed)
         torch.cuda.manual_seed_all(seed)
@@ -127,11 +130,11 @@ def main():
                          k=hp.topk)
 
         if hp.load_weight is not None:
-            print("加载预训练权重")
+            print("Load pre-training weights")
             model.load_state_dict(torch.load(hp.load_weight))
 
         # 数据准备
-        print(f"正在跑第{i + 1}折")
+        print(f"We're running the {i + 1} fold.")
 
         train_fold_dataloader = DataLoader(
             dataset=DTIDataset(return_drug_info=hp.return_drug_info, dataset=hp.dataset,
@@ -156,7 +159,7 @@ def main():
             collate_fn=collate_fn
         )
 
-        # 优化器 + L2正则化 + 权重初始化
+        # Optimizer + L2 regularization + weight initialization
         weight_p, bias_p = [], []
         # for p in model.parameters():
         #     if p.dim() > 1:
@@ -170,9 +173,9 @@ def main():
         optimizer = torch.optim.AdamW(
             [{'params': weight_p, 'weight_decay': hp.weight_decay}, {'params': bias_p, 'weight_decay': 0}],
             lr=hp.lr)
-        # 动态学习率
+        # Dynamic learning rate
         scheduler = None
-        # 损失函数
+        # loss function
         if hp.return_one:
             loss_fn = torch.nn.BCELoss()
         else:
@@ -180,7 +183,7 @@ def main():
             if hp.weight is not None:
                 weight = torch.FloatTensor(hp.weight).to(device)
             loss_fn = torch.nn.CrossEntropyLoss(weight=weight)
-        # 训练用对象
+        # trainer
         trainer = Trainer(
             model=model,
             loss_fn=loss_fn,
@@ -209,10 +212,10 @@ def main():
             writer.writerow([i + 1, ' test', thred_optim, round(test_loss, 4)] + test_result)
 
         model_size = round(os.path.getsize(f"weight/{hp.filename}.pt") / (1024 ** 2), 3)
-        print(f"模型文件大小：{model_size}Mb.")
+        print(f"Model file size：{model_size}Mb.")
         if hp.save_model:
             import shutil
-            print(f"模型保存到{hp.file_dir}/{i + 1}.pt")
+            print(f"The model is saved to {hp.file_dir}/{i + 1}.pt")
             shutil.move(f"weight/{hp.filename}.pt", f'{hp.file_dir}/{i + 1}.pt')
         else:
             os.remove(f"weight/{hp.filename}.pt")

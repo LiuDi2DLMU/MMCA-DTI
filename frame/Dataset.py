@@ -8,7 +8,7 @@ from torch.utils.data import Dataset
 
 def read_csv(file_path, keys: list) -> list:
     """
-    用于读取csv文件，通过传去的keys将每一行转换为字典后输出
+    Used to read the csv file, through the passed keys will be converted to a dictionary for each line and then output
     :param file_path:
     :param keys:
     :return:
@@ -84,7 +84,7 @@ class DTIDataset(Dataset):
             self.sp.load('./data/bpe1/m.model')
 
     def __len__(self):
-        '''返回数据集中的样本数'''
+        '''Returns the number of samples in the data set'''
         return len(self.results)
 
     def encodeDrug(self, drug_id, SMILES):
@@ -129,7 +129,7 @@ class DTIDataset(Dataset):
         return temp
 
     def __getitem__(self, index):
-        '''获取数据的方法，会和Dataloader连用'''
+        '''The method to get the data will be used in conjunction with the Dataloader.'''
         if index is None:
             return [int(temp["label"]) for temp in self.results]
         record = self.results[index]

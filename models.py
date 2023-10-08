@@ -40,7 +40,7 @@ class MMCADTI(nn.Module):
         )
         self.atomTrans = MoleculeTransformer(8, [50, self.dim])
 
-        self.bitattn = GatedCoAttention3(self.dim, self.dim)
+        self.bitattn = GatedCoAttention(self.dim, self.dim)
 
         self.proteinEncode = Encode(n_layer, self.conv, [1000, self.dim], protein_kernel_size, activate=nn.ReLU,
                                     k=self.k)

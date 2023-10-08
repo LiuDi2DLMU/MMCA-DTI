@@ -16,7 +16,7 @@ rdBase.LogToPythonStderr()
 
 def read_csv(file_path, keys: list) -> list:
     """
-    用于读取csv文件，通过传去的keys将每一行转换为字典后输出
+    Used to read the csv file, through the passed keys will be converted to a dictionary for each line and then output
     :param file_path:
     :param keys:
     :return:
@@ -35,7 +35,7 @@ def read_csv(file_path, keys: list) -> list:
 
 
 def one_of_k_encoding_unk(x, allowable_set):
-    '将x与allowable_set逐个比较，相同为True， 不同为False, 都不同则认为是最后一个相同'
+    'Compare x with allowable_set one by one, same is True, different is False, all different is considered to be the last same.'
     if x not in allowable_set:
         x = allowable_set[-1]
     return list(np.array(list(map(lambda s: x == s, allowable_set))) + 0)
