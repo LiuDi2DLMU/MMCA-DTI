@@ -3,7 +3,7 @@
 
 + data: create data storage.
 + data_process: Data preprocessing.
-  + dataset_.py: For constructing a balanced DrugBank dataset.
+  + dataset_build.py: For constructing a balanced DrugBank dataset.
   + get_k_fold_E1.py: For dividing the k-fold cross-validation data in the E1 setting.
   + get_k_fold_E2_E3.py: For dividing the k-fold cross-validation data in the E2 or E3 setting.
   + preprocess.py: Used to preprocess data for feature coding.
