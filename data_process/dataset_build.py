@@ -76,8 +76,7 @@ dataset = "DrugBank"
 positive_pairs = read_csv(f"../data/{dataset}/Origin Data/Positive.csv", ["drug_id", "target_id", "target_uniport_id"])
 drugs_smiles = read_csv(f"../data/{dataset}/Origin Data/smiles.csv", ["drug_id", "smiles"])
 
-# Drug_id with smiles Remove nulls and inorganic and very small molecule compounds
-# Reference HyperAttentionDTI
+# Drug_id with smiles Remove nulls and inorganic
 smiles = {}
 count = 0
 allow_rdkit_drug_id = list(np.load(f"../data/{dataset}/Post-processing Data/moleculeFromSmiles.npy", allow_pickle=True).item().keys())
@@ -85,7 +84,7 @@ allow_rdkit_drug_id = list(np.load(f"../data/{dataset}/Post-processing Data/mole
 for sample in drugs_smiles:
     # Excluding those without SMILES
     if sample["smiles"] != "":
-        # Exclusion of inorganic and very small molecule compounds
+        # Exclusion of inorganic
         if "C" not in sample["smiles"].replace("Ca", "") or "C" not in sample["smiles"].replace("Cl", ""):
             # print(sample["drug_id"], sample["smiles"])
             count += 1
