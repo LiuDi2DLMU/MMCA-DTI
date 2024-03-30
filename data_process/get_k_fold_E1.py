@@ -64,7 +64,7 @@ def split_k_fold(kfold, dataset="DrugBank"):
 
         train_size = int(len(otherdata) * 0.8)
 
-        # 在otherdata中不包含在测试集中出现的药物与靶点
+        # Drugs and targets not included in the test set in otherdata
         split_drug = []
         split_protein = []
         for id in test_drug:
@@ -73,25 +73,25 @@ def split_k_fold(kfold, dataset="DrugBank"):
         for id in test_protein:
             if len(otherdata[otherdata[1] == id]) == 0:
                 split_protein.append(id)
-        # 将测试集中的数据移除部分
+        # Remove some of the data from the test set
         test_data2 = test_data.loc[~test_data[0].isin(split_drug), :].loc[~test_data[1].isin(split_protein), :]
         loss = len(test_data) - len(test_data2)
         test_data = test_data2
         del test_data2
-        # 保存测试集
+        # Save Test Set
         if not os.path.exists(f"kfolddata/{dataset}/1/{i}/"):
             os.makedirs(f"kfolddata/{dataset}/1/{i}/")
         test_data.to_csv(f"kfolddata/{dataset}/1/{i}/test.csv", header=False, index=False)
-        # 在测试集中出现的药物与靶点
+        # Drugs and targets appearing in the test set
         test_drug = test_data[0].drop_duplicates()
         test_protein = test_data[1].drop_duplicates()
 
-        # 合成训练集
-        # 每条记录 或是药物在测试集中 或者是靶点在测试集中
+        # Synthetic training set
+        # Each record or drug in the test set or target in the test set
         data_a = pd.concat([otherdata.loc[otherdata[0].isin(test_drug)],
                             otherdata.loc[otherdata[1].isin(test_protein)]]).drop_duplicates()
         if len(data_a) > train_size:
-            # 抛弃一部分数据 保持radio比例的数据在data_a中
+            # Discard a portion of the data to maintain the ratio in data_a
             x = dropdata(data_a, test_drug, 0)
             y = dropdata(data_a, test_protein, 1)
             data_a = pd.concat([x, y]).drop_duplicates()

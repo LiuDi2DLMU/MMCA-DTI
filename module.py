@@ -55,7 +55,7 @@ class Encode(nn.Module):
 class MoleculeMultiHeadSelfAttention(nn.Module):
     def __init__(self, num_heads, dim, N=50):
         super().__init__()
-        # Q, K, V 转换矩阵，这里假设输入和输出的特征维度相同
+        # Q. K, V transformation matrix, assuming that the input and output feature dimensions are the same
         self.q = nn.Linear(dim, dim)
         self.k = nn.Linear(dim, dim)
         self.v = nn.Linear(dim, dim)
@@ -70,12 +70,12 @@ class MoleculeMultiHeadSelfAttention(nn.Module):
 
     def forward(self, x, adj, matrix):
         B, N, C = x.shape
-        # 生成转换矩阵并分多头
+        # Generate a transformation matrix and split it into multiple heads
         q = self.q(x).reshape(B, N, self.num_heads, -1).permute(0, 2, 1, 3)
         k = self.k(x).reshape(B, N, self.num_heads, -1).permute(0, 2, 1, 3)
         v = self.k(x).reshape(B, N, self.num_heads, -1).permute(0, 2, 1, 3)
 
-        # 点积得到attention score
+        # Dot product yields attention score
         attn = q @ k.transpose(2, 3) * (x.shape[-1] ** -0.5)
         attn = attn.softmax(dim=-1).transpose(0, 1)
 
@@ -92,7 +92,7 @@ class MoleculeMultiHeadSelfAttention(nn.Module):
             attn_sum.append(x)
         attn_sum = torch.stack(attn_sum, dim=0).transpose(0, 1)
 
-        # 乘上attention score并输出
+        # Multiply the attention score and output
         v = (attn_sum @ v).permute(0, 2, 1, 3).reshape(B, N, C)
         return v
 
@@ -114,7 +114,7 @@ class MoleculeTransformer(nn.Module):
 
 class GatedCoAttention(nn.Module):
     """
-    func保持为sigmoid
+    Func remains sigmoid
     """
 
     def __init__(self, d_dim, p_dim):

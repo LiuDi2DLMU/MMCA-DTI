@@ -44,8 +44,7 @@ def one_of_k_encoding_unk(x, allowable_set):
 def get_atom_features(atom, xyz):
     possible_atom = ["C", "O", "N", "F", "S", "Cl", "P", "Br", "I", "Si", 'H']
     atom_features = one_of_k_encoding_unk(atom.GetSymbol(), possible_atom)
-    atom_features += one_of_k_encoding_unk(atom.GetImplicitValence(), [0, 1])  # 隐式化合价
-    # atom_features += one_of_k_encoding_unk(atom.GetNumRadicalElectrons(), [0, 1]) # 没有意义，所有的都为0
+    atom_features += one_of_k_encoding_unk(atom.GetImplicitValence(), [0, 1])  # Implicit valence
     atom_features += one_of_k_encoding_unk(atom.GetDegree(), [0, 1, 2, 3, 4])
     atom_features += one_of_k_encoding_unk(atom.GetFormalCharge(), [0, -1, 1])
     atom_features += one_of_k_encoding_unk(atom.GetHybridization(),
@@ -97,7 +96,7 @@ def get_bond_features(bond):
 
 def read_csv(file_path, keys: list) -> list:
     """
-    用于读取csv文件，通过传去的keys将每一行转换为字典后输出
+    Used to read CSV files, convert each line into a dictionary through the passed keys, and output
     :param file_path:
     :param keys:
     :return:
@@ -149,7 +148,7 @@ def encodeDrug(SMILES):
     if info != "":
         print(info)
     mol = Chem.RemoveAllHs(mol)
-    # 坐标和原子信息
+    # Coordinates and atomic information
     conf = mol.GetConformer()
     geom = list(conf.GetPositions())
     if len(geom) == 0:
@@ -172,8 +171,8 @@ def encodeDrug(SMILES):
                 bond_features_ij = get_bond_features(bond_ij)
                 edge_features.append(bond_features_ij)
 
-    G.ndata['x'] = torch.from_numpy(np.array(atom_features))  # dgl添加原子/节点特征
-    G.edata['w'] = torch.from_numpy(np.array(edge_features))  # dgl添加键/边特征
+    G.ndata['x'] = torch.from_numpy(np.array(atom_features))  # Adding atomic/node features to dgl
+    G.edata['w'] = torch.from_numpy(np.array(edge_features))  # Add key/edge features to dgl
 
     fp = AllChem.GetMorganFingerprintAsBitVect(mol, radius=2, nBits=1024, useFeatures=True).ToBitString()
     fp = np.array(list(map(int, list(fp))))
