@@ -52,3 +52,17 @@ where 'dataset_name' is for 'Davis', 'DrugBank' or 'KIBA', respectively; 'k_fold
 python train_k_fold.py --dataset dataset_name --k k_fold_num --e e_setting --load_weight load_weight_file
 ```
 where 'dataset_name' is for 'Davis', 'DrugBank' or 'KIBA', respectively; 'k_fold_num' is the k-fold num like 5; 'e_setting' is for '1', '2' or '3' and 'load_weight_file' is to load the weight file to continue training.
+
+Then, the result will be saved.
+
+
+The script will create a result folder, and the results of model training, validation, and testing will be saved to the folder based on the training set, forming the following directory format.
+
+> - result
+>  - Davis
+>    - 0
+>      - result.csv
+>      - hyper.csv
+>      - 1.pt
+
+Among them, hyper.csv saves the parameters in this training,. pt file is the corresponding model weight file, and result.csv saves all training evaluation indicators.
