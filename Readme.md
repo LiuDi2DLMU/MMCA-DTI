@@ -1,9 +1,12 @@
 #  Source codes:
 
 
-+ data: create data storage.
++ data: data storage.
+  +  Provide Daivs and KIBA datasets here. Due to DrugBank's policy requirements, we are unable to provide its data.
+  +  We provide a script in the data_process folder. Please follow DrugBank-Preprocessing. py, preprocess. py, and dataset_build. py to build a balanced dataset. Some file addresses in the script need to be adjusted according to the situation.
 + data_process: Data preprocessing.
   + dataset_build.py: For constructing a balanced DrugBank dataset.
+  + DrugBank_Preprocessing.py : Used to extract the DrugBank dataset from an XML file.
   + get_k_fold_E1.py: For dividing the k-fold cross-validation data in the E1 setting.
   + get_k_fold_E2_E3.py: For dividing the k-fold cross-validation data in the E2 or E3 setting.
   + preprocess.py: Used to preprocess data for feature coding.

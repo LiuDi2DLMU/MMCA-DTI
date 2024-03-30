@@ -73,13 +73,13 @@ def create_negative_samples(target_ids, drug_ids, positive_pairs, random_seed=25
 
 random_seed = 25
 dataset = "DrugBank"
-positive_pairs = read_csv(f"../data/{dataset}/Origin Data/Positive.csv", ["drug_id", "target_id", "target_uniport_id"])
-drugs_smiles = read_csv(f"../data/{dataset}/Origin Data/smiles.csv", ["drug_id", "smiles"])
+positive_pairs = read_csv(f"../data/{dataset}/Positive.csv", ["drug_id", "target_id", "target_uniport_id"])
+drugs_smiles = read_csv(f"../data/{dataset}/smiles.csv", ["drug_id", "smiles"])
 
 # Drug_id with smiles Remove nulls and inorganic
 smiles = {}
 count = 0
-allow_rdkit_drug_id = list(np.load(f"../data/{dataset}/Post-processing Data/moleculeFromSmiles.npy", allow_pickle=True).item().keys())
+allow_rdkit_drug_id = list(np.load(f"../data/{dataset}/moleculeFromSmiles.npy", allow_pickle=True).item().keys())
 
 for sample in drugs_smiles:
     # Excluding those without SMILES
@@ -99,7 +99,7 @@ all_drug_ids = list(smiles.keys())
 
 # IDs and sequences of all targets in the dataset
 target_seqs = {}
-for seq in SeqIO.parse(f"../data/{dataset}/Origin Data/target.fasta", "fasta"):
+for seq in SeqIO.parse(f"../data/{dataset}/target.fasta", "fasta"):
     if seq.id.split("|")[1] not in target_seqs.keys():
         target_seqs[seq.id.split("|")[1]] = seq.seq
 all_target_uniport_ids = list(target_seqs.keys())
@@ -135,6 +135,6 @@ for data, label in zip(x, y):
     drug_id = data["drug_id"]
     target_id = data["target_uniport_id"]
     write_csv([drug_id, target_id, smiles[drug_id], str(target_seqs[target_id]), label],
-              f"../data/{dataset}/Post-processing Data/0/0.csv")
+              f"../data/{dataset}/DrugBank.csv")
 
 print("dataset build finished!")
